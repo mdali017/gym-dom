@@ -42,7 +42,7 @@ const MidNavBar = () => {
     },
     {
       title: "Products",
-      path: "/",
+      path: "/products",
     },
     // {
     //   title: "Home",

@@ -1,13 +1,7 @@
 import Container from "@/components/common/Container";
+import { TProductData } from "@/types";
 
-type TProductData = {
-  id: number;
-  image: string;
-  title: string;
-  price: number;
-  para: string;
-  category: string;
-};
+
 
 const FearedProductSection = () => {
   const productData: TProductData[] = [
