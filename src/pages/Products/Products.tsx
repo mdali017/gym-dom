@@ -6,9 +6,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetAllCategoryQuery } from "@/redux/api/api";
 import { TProductData } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 
 const productData: TProductData[] = [
   {
@@ -51,9 +53,18 @@ const productData: TProductData[] = [
 
 const Products = () => {
   const [isOpenCategory, setIsOpenCategory] = useState(true);
-//   const [minPrice, setMinPrice] = useState<string>("");
-//   const [maxPrice, setMaxPrice] = useState<string>("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const { data } = useGetAllCategoryQuery(undefined);
+  const categorySectionData = data?.data?.data;
+  const location = useLocation();
+  const categoryData = location?.state?.data || [];
+  
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(categoryData);
+
+  useEffect(() => {
+    if (categoryData.length > 0) {
+      setSelectedCategories(categoryData);
+    }
+  }, [categoryData]);
 
   const toggleOpenCategory = () => {
     setIsOpenCategory(!isOpenCategory);
@@ -67,20 +78,8 @@ const Products = () => {
     }
   };
 
-  const fitnessCategories = [
-    "All Categories",
-    "Treadmills",
-    "Ellipticals",
-    "Exercise Bikes",
-    "Rowing Machines",
-    "Strength Training Equipment",
-    "Yoga Mats",
-    "Dumbbells",
-    "Kettlebells",
-  ];
-
   return (
-    <div className="flex ">
+    <div className="flex">
       <div className="w-[20%] border border-gray-300">
         <div
           className="p-4 rounded-md cursor-pointer mb-4"
@@ -91,17 +90,17 @@ const Products = () => {
             <FaChevronDown className="text-gray-500" />
           </summary>
 
-          <ul className="mt-2 pl-5  list-inside text-gray-600">
-            {fitnessCategories?.map((item: any, index) => (
+          <ul className="mt-2 pl-5 list-inside text-gray-600">
+            {categorySectionData?.map((item: any, index: number) => (
               <li key={index}>
                 <label className="inline-flex items-center">
                   <input
                     type="checkbox"
                     className="form-checkbox h-5 w-5 text-indigo-600 rounded"
-                    checked={selectedCategories.includes(item)}
-                    onChange={() => handleCategoryChange(item)}
+                    checked={selectedCategories.includes(item?.category_name)}
+                    onChange={() => handleCategoryChange(item?.category_name)}
                   />
-                  <span className="ml-2">{item}</span>
+                  <span className="ml-2">{item.category_name}</span>
                 </label>
               </li>
             ))}
@@ -140,8 +139,8 @@ const Products = () => {
         </button>
       </div>
       <div className="w-[80%]">
-        <div className="flex justify-between  px-10 mt-9">
-          <h2> All Products (200)</h2>
+        <div className="flex justify-between px-10 mt-9">
+          <h2>All Products (200)</h2>
           <div>
             <Select>
               <SelectTrigger className="w-[180px]">
@@ -149,15 +148,14 @@ const Products = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {/* <SelectLabel>Fruits</SelectLabel> */}
-                  <SelectItem value="apple">Ascending</SelectItem>
-                  <SelectItem value="banana">Descending</SelectItem>
+                  <SelectItem value="ascending">Ascending</SelectItem>
+                  <SelectItem value="descending">Descending</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         </div>
-        <div className="">
+        <div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
             {productData?.map((item, index) => (
               <div
@@ -168,12 +166,12 @@ const Products = () => {
                   <img
                     src={item?.image}
                     alt=""
-                    className=" w-full h-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
+                    className="w-full h-full object-cover transition duration-500 group-hover:scale-105 sm:h-72"
                   />
                 </div>
-                <div className="relative border border-gray-100 bg-white px-6 ">
+                <div className="relative border border-gray-100 bg-white px-6">
                   <div className="flex justify-between mb-4">
-                    <h3 className=" text-xl font-medium text-gray-900">
+                    <h3 className="text-xl font-medium text-gray-900">
                       {item?.title}
                     </h3>
                     <p className="mt-1.5 text-sm text-gray-700">
@@ -185,10 +183,10 @@ const Products = () => {
                   </p>
 
                   <div className="flex gap-6 py-5">
-                    <button className="block  rounded bg-yellow-400 px-4 py-2 text-sm font-medium transition hover:scale-105">
+                    <button className="block rounded bg-yellow-400 px-4 py-2 text-sm font-medium transition hover:scale-105">
                       Add to Cart
                     </button>
-                    <button className="block  rounded bg-yellow-400 px-4 py-2 text-sm font-medium transition hover:scale-105">
+                    <button className="block rounded bg-yellow-400 px-4 py-2 text-sm font-medium transition hover:scale-105">
                       View Details
                     </button>
                   </div>
