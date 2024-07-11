@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const CategorySection = () => {
   // const { data, isLoading, isError } = useGetAllTodoQuery(undefined);
 
-  const { data, isLoading, isError } = useGetAllCategoryQuery(undefined);
+  const { data } = useGetAllCategoryQuery(undefined);
   const categorySectionData = data?.data?.data;
   // console.log(categorySectionData);
   // const categorySectionData = [
